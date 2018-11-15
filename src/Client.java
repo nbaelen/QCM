@@ -8,11 +8,11 @@ public class Client {
     private Socket clientSocket;
     private BufferedReader clientBufferedReader;
     private PrintStream serverPrintStream;
+    private Scanner scanner;
 
-
-    //Constructeur par défaut
-    public Client() {
-        this.connectToServer("localhost",50000);
+    public Client(String host, int port) {
+        this.connectToServer(host, port);
+        this.scanner = new Scanner(System.in);
     }
 
     public void connectToServer(String host, int port) {
@@ -27,16 +27,37 @@ public class Client {
         }
     }
 
-    public void waitServer() {
-        try {
-            System.out.println("Server > " + clientBufferedReader.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void waitServerMessage() {
+        String serverMessage = "";
+        while (true) {
+            try {
+                serverMessage = clientBufferedReader.readLine();
+
+                if (serverMessage.contains("?")) {
+                    System.out.println("Server > " + serverMessage);
+                    this.answerServerQuestion();
+                    break;
+                } else if (serverMessage.equals("@")) {
+                    break;
+                } else {
+                    System.out.println("Server > " + serverMessage);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    public void answerServerQuestion() {
+        String clientanswer = scanner.nextLine();
+        System.out.println("Client > " + clientanswer);
+        serverPrintStream.println(clientanswer);
+        this.waitServerMessage();
+    }
+
     public static void main(String[] args) {
-        Client c = new Client();
-        c.waitServer();
+        Client c = new Client("localhost", 50000);
+        c.waitServerMessage();
     }
 }

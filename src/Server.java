@@ -8,10 +8,18 @@ public class Server {
     //Variables de classe
     public ArrayList<ServerThread> allThreads = new ArrayList<>();
 
+    /**
+     * Constructeur de classe par défaut
+     */
     public Server() {
         this.startListening(50000, 2);
     }
 
+    /**
+     * Fonction en charge d'écouter le @param port jusqu'à ce que le nombre @param players soit connectés
+     * @param port
+     * @param players
+     */
     public void startListening(int port, int players) {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             System.out.println(".... Serveur à l'écoute ....");
@@ -27,7 +35,6 @@ public class Server {
 
     public void threadQuestion() {
         for (ServerThread thread : this.allThreads) {
-            thread.question();
         }
     }
 
