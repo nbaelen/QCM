@@ -6,13 +6,15 @@ import java.util.ArrayList;
 public class Server {
 
     //Variables de classe
-    public ArrayList<ServerThread> allThreads = new ArrayList<>();
+    private ArrayList<ServerThread> allThreads = new ArrayList<>();
+    public boolean canStart = false;
 
     /**
      * Constructeur de classe par défaut
      */
     public Server() {
         this.startListening(50000, 2);
+        this.canStart = true;
     }
 
     /**
@@ -21,15 +23,16 @@ public class Server {
      * @param players
      */
     public void startListening(int port, int players) {
-        try (ServerSocket listenSocket = new ServerSocket(port)) {
-            System.out.println(".... Serveur à l'écoute ....");
-            while (allThreads.size() < players) {
-                Socket serviceSocket = listenSocket.accept();
-                allThreads.add(new ServerThread(String.valueOf(allThreads.size()), serviceSocket));
-            }
-        } catch (IOException ex) {
-            System.out.println("Connexion impossible.");
 
+        while (this.allThreads.size() < players) {
+            try (ServerSocket listenSocket = new ServerSocket(port)) {
+                System.out.println(".... Serveur à l'écoute ....");
+                Socket serviceSocket = listenSocket.accept();
+                this.allThreads.add(new ServerThread(String.valueOf(this.allThreads.size()+1), this, serviceSocket));
+                this.allThreads.get(allThreads.size() - 1).start();
+            } catch (IOException ex) {
+                System.out.println("Connexion impossible.");
+            }
         }
     }
 

@@ -8,20 +8,18 @@ public class Client {
     private Socket clientSocket;
     private BufferedReader clientBufferedReader;
     private PrintStream serverPrintStream;
-    private Scanner scanner;
+    private Scanner scanner = new Scanner(System.in);
 
     public Client(String host, int port) {
         this.connectToServer(host, port);
-        this.scanner = new Scanner(System.in);
+        this.waitServerMessage();
     }
 
     public void connectToServer(String host, int port) {
         try {
             this.clientSocket = new Socket(host, port);
-            System.out.println("Client > Connexion établie avec le serveur (" + this.clientSocket.getRemoteSocketAddress() + ")");
             this.clientBufferedReader= new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream(), "utf-8"));
             this.serverPrintStream = new PrintStream(this.clientSocket.getOutputStream(), true, "utf-8");
-            System.out.println("Server > " + this.clientBufferedReader.readLine());
         } catch (IOException e) {
             System.err.println("Connexion au serveur impossible !");
         }
@@ -50,9 +48,9 @@ public class Client {
     }
 
     public void answerServerQuestion() {
-        String clientanswer = scanner.nextLine();
-        System.out.println("Client > " + clientanswer);
-        serverPrintStream.println(clientanswer);
+        String clientAnswer = this.scanner.nextLine();
+        System.out.println("Client > " + clientAnswer);
+        serverPrintStream.println(clientAnswer);
         this.waitServerMessage();
     }
 
