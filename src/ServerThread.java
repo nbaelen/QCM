@@ -3,27 +3,39 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
-class ServerThread extends Thread {
+class ServerThread implements Runnable {
 
-    private Socket ss;      // Socket de service du client
-    private PrintStream ps; // PrintStream du client
-    private BufferedReader br; // BufferedReader du client
+    private String name;
+    private Socket serviceSocket;      // Socket de service du client
+    private PrintStream clientPrintStream; // PrintStream du client
+    private BufferedReader serverBufferedReader; // BufferedReader du client
 
-    public ServerThread(Socket ss) {
-        this.ss = ss;
+    public ServerThread(String name, Socket serviceSocket) {
+        this.name = name;
+        this.serviceSocket = serviceSocket;
+
+        //Création des flux pour discuter avec le client
         try {
-            this.ps = new PrintStream(ss.getOutputStream(), true, "utf-8");
-            this.br = new BufferedReader(new InputStreamReader(ss.getInputStream(), "utf-8"));
+            this.clientPrintStream = new PrintStream(serviceSocket.getOutputStream(), true, "utf-8");
+            this.serverBufferedReader = new BufferedReader(new InputStreamReader(serviceSocket.getInputStream(), "utf-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        this.run();
     }
 
     @Override
     public void run() {
+        this.notifyConnexion();
+    }
 
+    public void notifyConnexion() {
+        System.out.println("Thread " + this.name + " > Connexion établie avec un client (" + serviceSocket.getRemoteSocketAddress() + ")");
+    }
+
+    public void question() {
+        clientPrintStream.println("question");
     }
 }
