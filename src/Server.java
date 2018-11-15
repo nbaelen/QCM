@@ -13,7 +13,8 @@ public class Server {
      * Constructeur de classe par défaut
      */
     public Server() {
-        this.startListening(50000, 2);
+        this.startListening(50000, 1);
+        System.out.println("canStart");
         this.canStart = true;
     }
 

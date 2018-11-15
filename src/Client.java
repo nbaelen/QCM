@@ -31,11 +31,8 @@ public class Client {
             try {
                 serverMessage = clientBufferedReader.readLine();
 
-                if (serverMessage.contains("?")) {
-                    System.out.println("Server > " + serverMessage);
+                if (serverMessage.equals("@")) {
                     this.answerServerQuestion();
-                    break;
-                } else if (serverMessage.equals("@")) {
                     break;
                 } else {
                     System.out.println("Server > " + serverMessage);

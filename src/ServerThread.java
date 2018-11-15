@@ -8,7 +8,7 @@ class ServerThread extends Thread {
 
     private String name;
     private Server server;
-    private Socket serviceSocket;      // Socket de service du client
+    private Socket serviceSocket; // Socket de service du client
     private PrintStream clientPrintStream; // PrintStream du client
     private BufferedReader serverBufferedReader; // BufferedReader du client
     private String clientPseudo;
@@ -35,14 +35,25 @@ class ServerThread extends Thread {
     @Override
     public void run() {
         this.notifyConnexion();
+        this.askClientPseudo();
 
         //A changer c'est pas beau
-        while (true) {
+        /* while (true) {
             if (this.server.canStart == true) {
                 break;
             }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("En attente d'autres joueurs ...");
+        } */
+
+        if (askQuestion()) {
+            this.sendToClient("Bravo !");
         }
-        this.askClientPseudo();
+
     }
 
     /**
@@ -58,8 +69,13 @@ class ServerThread extends Thread {
      * @param message
      */
     public void sendToClient(String message) {
-        System.out.println("Thread " + this.name + " > " + message);
+        if (!message.equals("@"))
+            System.out.println("Thread " + this.name + " > " + message);
         this.clientPrintStream.println(message);
+    }
+
+    public void endMessage() {
+        this.sendToClient("@");
     }
 
     /**
@@ -82,7 +98,29 @@ class ServerThread extends Thread {
      */
     public void askClientPseudo() {
         this.sendToClient("Quel est votre pseudo ?");
+        this.endMessage();
         this.clientPseudo = this.waitClientAnswer();
         this.sendToClient("Bonjour " + this.clientPseudo + " !");
+    }
+
+    public boolean askQuestion() {
+        Question q = new Question(2);
+        this.sendToClient(q.getQuestion());
+
+        for (String possibleAnswer : q.getPossibleAnswers()) {
+            this.sendToClient(possibleAnswer);
+        }
+        this.endMessage();
+
+        String clientAnswer = waitClientAnswer();
+        System.out.println(clientAnswer);
+        System.out.println(q.getAnswer());
+        if (clientAnswer.equals(q.getAnswer())) {
+            System.out.println("true");
+            return true;
+        } else {
+            System.out.println("false");
+            return false;
+        }
     }
 }
