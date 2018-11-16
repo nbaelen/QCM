@@ -13,8 +13,10 @@ public class Server {
      * Constructeur de classe par défaut
      */
     public Server() {
-        this.startListening(50000, 1);
-        this.canStart = true;
+        while (true) {
+            this.startListening(50000, 1);
+            this.canStart = true;
+        }
     }
 
     /**

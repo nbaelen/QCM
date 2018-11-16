@@ -37,7 +37,7 @@ class ServerThread extends Thread {
     public void run() {
         this.notifyConnexion();
         this.askClientPseudo();
-        this.startGame(8);
+        this.startGame(3);
 
         //A changer c'est pas beau
         /* while (true) {
@@ -55,7 +55,7 @@ class ServerThread extends Thread {
 
     }
 
-    //Fonctions en charge des échanges avec le client
+    //Fonctions en charge des échanges de messages avec le client
 
     /**
      * Permet d'envoyer un @param message au client, et de le notifier dans la console
@@ -63,7 +63,7 @@ class ServerThread extends Thread {
      * @param message
      */
     public void sendToClient(String message) {
-        if (!message.equals("@"))
+        if (!message.equals("???") || !message.equals("###"))
             System.out.println("Thread " + this.name + " > " + message);
         this.clientPrintStream.println(message);
     }
@@ -71,8 +71,8 @@ class ServerThread extends Thread {
     /**
      * Termine la communication avec un client en envoyant un caractère spécifique
      */
-    public void endMessage() {
-        this.sendToClient("@");
+    public void endTransmission() {
+        this.sendToClient("###");
     }
 
     /**
@@ -81,6 +81,7 @@ class ServerThread extends Thread {
      * @return clientAnswer
      */
     public String waitClientAnswer() {
+        this.sendToClient("???");
         String clientAnswer = "";
         try {
             clientAnswer = this.serverBufferedReader.readLine();
@@ -108,6 +109,7 @@ class ServerThread extends Thread {
         for (int i = 0; i < numberQuestion; i++) {
             askQuestion();
         }
+        this.endTransmission();
     }
 
     /**
@@ -115,7 +117,6 @@ class ServerThread extends Thread {
      */
     public void askClientPseudo() {
         this.sendToClient("Quel est votre pseudo ?");
-        this.endMessage();
         this.clientPseudo = this.waitClientAnswer();
         this.sendToClient("Bonjour " + this.clientPseudo + " !");
     }
@@ -133,7 +134,6 @@ class ServerThread extends Thread {
             this.sendToClient(possibleAnswer);
         }
         this.sendToClient("Votre réponse ?");
-        this.endMessage();
 
         if (waitClientAnswer().toLowerCase().equals(q.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
