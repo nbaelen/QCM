@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Client {
@@ -46,7 +47,6 @@ public class Client {
 
     public void answerServerQuestion() {
         String clientAnswer = this.scanner.nextLine();
-        System.out.println("Client > " + clientAnswer);
         serverPrintStream.println(clientAnswer);
         this.waitServerMessage();
     }

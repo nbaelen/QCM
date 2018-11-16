@@ -36,6 +36,7 @@ class ServerThread extends Thread {
     public void run() {
         this.notifyConnexion();
         this.askClientPseudo();
+        this.startGame(2);
 
         //A changer c'est pas beau
         /* while (true) {
@@ -50,9 +51,6 @@ class ServerThread extends Thread {
             System.out.println("En attente d'autres joueurs ...");
         } */
 
-        if (askQuestion()) {
-            this.sendToClient("Bravo !");
-        }
 
     }
 
@@ -103,24 +101,27 @@ class ServerThread extends Thread {
         this.sendToClient("Bonjour " + this.clientPseudo + " !");
     }
 
-    public boolean askQuestion() {
-        Question q = new Question(2);
-        this.sendToClient(q.getQuestion());
+    public void startGame(int numberQuestion) {
+        for (int i=0; i<numberQuestion; i++) {
+            askQuestion();
+        }
+    }
 
+    public void askQuestion() {
+        Question q = new Question();
+
+        this.sendToClient(q.getQuestion());
         for (String possibleAnswer : q.getPossibleAnswers()) {
             this.sendToClient(possibleAnswer);
         }
+        this.sendToClient("Votre réponse ?");
         this.endMessage();
 
-        String clientAnswer = waitClientAnswer();
-        System.out.println(clientAnswer);
-        System.out.println(q.getAnswer());
-        if (clientAnswer.equals(q.getAnswer())) {
-            System.out.println("true");
-            return true;
+        if (waitClientAnswer().toLowerCase().equals(q.getAnswer().toLowerCase())) {
+            this.sendToClient("Bonne réponse ! Bravo !");
         } else {
-            System.out.println("false");
-            return false;
+            this.sendToClient("Mauvaise réponse... La bonne réponse était : " + q.getAnswer());
         }
+
     }
 }

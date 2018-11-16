@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Optional;
+import java.util.Random;
 
 public class Question {
 
@@ -12,10 +11,10 @@ public class Question {
     private String[] possibleAnswers;
     private String answer;
 
-    public Question(int index) {
+    public Question() {
         try {
             this.questionFileReader = new BufferedReader(new FileReader("questions.txt"));
-            this.setInformations(this.getInformations(index));
+            this.setInformations(this.getInformations(new Random().nextInt(3)));
         } catch (IOException e) {
             e.printStackTrace();
         }

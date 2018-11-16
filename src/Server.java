@@ -14,7 +14,6 @@ public class Server {
      */
     public Server() {
         this.startListening(50000, 1);
-        System.out.println("canStart");
         this.canStart = true;
     }
 
