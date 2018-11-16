@@ -36,11 +36,6 @@ public class Server {
         }
     }
 
-    public void threadQuestion() {
-        for (ServerThread thread : this.allThreads) {
-        }
-    }
-
     public static void main(String[] args) {
         Server s = new Server();
     }

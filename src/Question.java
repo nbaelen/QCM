@@ -11,29 +11,42 @@ public class Question {
     private String[] possibleAnswers;
     private String answer;
 
+    /**
+     * Constructeur de classe. Permet la génération d'une question aléatoire contenue dans le fichier questions.txt
+     */
     public Question() {
         try {
             this.questionFileReader = new BufferedReader(new FileReader("questions.txt"));
-            this.setInformations(this.getInformations(new Random().nextInt(3)));
+            System.out.println("Generating new Question");
+            this.setInformations(this.getInformations(new Random().nextInt(6)));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Récupère la question renseignée à la @param lineNumber fourni
+     * @param lineNumber
+     * @return
+     * @throws IOException
+     */
     public String getInformations(int lineNumber) throws IOException {
-        String line;
+        String line = "";
         int counter = 0;
-
         while ((line = questionFileReader.readLine()) != null) {
-            counter++;
-            System.out.println(line);
             if (counter == lineNumber) {
+                System.out.println("Line " + counter + " : " + line);
                 return line;
             }
+            counter++;
         }
         return "";
     }
 
+    /**
+     * Assigne les variables de classe à l'aide d'une chaine d'informations fournie
+     * @param informations
+     */
     public void setInformations(String informations) {
         System.out.println("Infos = " + informations);
         String[] informationsArray = informations.split(";",-1);
@@ -53,10 +66,5 @@ public class Question {
 
     public String[] getPossibleAnswers() {
         return possibleAnswers;
-    }
-
-    @Override
-    public String toString() {
-        return this.question + this.possibleAnswers + this.answer;
     }
 }

@@ -15,6 +15,7 @@ class ServerThread extends Thread {
 
     /**
      * Constructeur de classe
+     *
      * @param name
      * @param serviceSocket
      */
@@ -36,7 +37,7 @@ class ServerThread extends Thread {
     public void run() {
         this.notifyConnexion();
         this.askClientPseudo();
-        this.startGame(2);
+        this.startGame(8);
 
         //A changer c'est pas beau
         /* while (true) {
@@ -54,16 +55,11 @@ class ServerThread extends Thread {
 
     }
 
-    /**
-     * Notifie la connexion entre le thread et le client
-     */
-    public void notifyConnexion() {
-        System.out.println("Thread " + this.name + " > Connexion établie avec un client (" + serviceSocket.getRemoteSocketAddress() + ")");
-        this.sendToClient("Bienvenue au QCM. Vous êtes connecté au serveur");
-    }
+    //Fonctions en charge des échanges avec le client
 
     /**
      * Permet d'envoyer un @param message au client, et de le notifier dans la console
+     *
      * @param message
      */
     public void sendToClient(String message) {
@@ -72,12 +68,16 @@ class ServerThread extends Thread {
         this.clientPrintStream.println(message);
     }
 
+    /**
+     * Termine la communication avec un client en envoyant un caractère spécifique
+     */
     public void endMessage() {
         this.sendToClient("@");
     }
 
     /**
      * Permet d'attendre la réponse d'une client, et la renvoie
+     *
      * @return clientAnswer
      */
     public String waitClientAnswer() {
@@ -92,7 +92,26 @@ class ServerThread extends Thread {
     }
 
     /**
+     * Notifie la connexion entre le thread et le client
+     */
+    public void notifyConnexion() {
+        System.out.println("Thread " + this.name + " > Connexion établie avec un client (" + serviceSocket.getRemoteSocketAddress() + ")");
+        this.sendToClient("Bienvenue au QCM. Vous êtes connecté au serveur");
+    }
+
+    //Fonctions relatives au jeu
+
+    /**
      * Demande au client son pseudo et le stocke dans la variable de classe associée
+     */
+    public void startGame(int numberQuestion) {
+        for (int i = 0; i < numberQuestion; i++) {
+            askQuestion();
+        }
+    }
+
+    /**
+     * Demande au client son pseudonyme et l'assigne
      */
     public void askClientPseudo() {
         this.sendToClient("Quel est votre pseudo ?");
@@ -101,13 +120,12 @@ class ServerThread extends Thread {
         this.sendToClient("Bonjour " + this.clientPseudo + " !");
     }
 
-    public void startGame(int numberQuestion) {
-        for (int i=0; i<numberQuestion; i++) {
-            askQuestion();
-        }
-    }
-
-    public void askQuestion() {
+    /**
+     * Pose une question au joueur, et valide ou non sa réponse à l'aide d'un boolean
+     *
+     * @return goodAnswer
+     */
+    public boolean askQuestion() {
         Question q = new Question();
 
         this.sendToClient(q.getQuestion());
@@ -119,9 +137,10 @@ class ServerThread extends Thread {
 
         if (waitClientAnswer().toLowerCase().equals(q.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
+            return true;
         } else {
             this.sendToClient("Mauvaise réponse... La bonne réponse était : " + q.getAnswer());
+            return false;
         }
-
     }
 }
