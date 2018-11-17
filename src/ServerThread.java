@@ -6,12 +6,16 @@ import java.net.Socket;
 
 class ServerThread extends Thread {
 
+    //Variables utilisées pour le fonctionnement du Thread
     private String name;
     private Server server;
     private Socket serviceSocket; // Socket de service du client
     private PrintStream clientPrintStream; // PrintStream du client
     private BufferedReader serverBufferedReader; // BufferedReader du client
+
+    //Variables utilisées pour le fonctionnement du jeu
     private String clientPseudo;
+    private int score;
 
     /**
      * Constructeur de classe
@@ -107,8 +111,10 @@ class ServerThread extends Thread {
      */
     public void startGame(int numberQuestion) {
         for (int i = 0; i < numberQuestion; i++) {
-            askQuestion();
+            if (askQuestion())
+                this.addScore(1);
         }
+        this.sendToClient(this.getScore());
         this.endTransmission();
     }
 
@@ -142,5 +148,14 @@ class ServerThread extends Thread {
             this.sendToClient("Mauvaise réponse... La bonne réponse était : " + q.getAnswer());
             return false;
         }
+    }
+
+    //Fonctions relatives à la gestion des scores
+    public void addScore(int point) {
+        this.score += point;
+    }
+
+    public String getScore() {
+        return "Votre score est de " + this.score + " points !";
     }
 }

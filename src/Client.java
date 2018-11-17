@@ -19,6 +19,8 @@ public class Client {
         this.waitServerMessage();
     }
 
+    //Fonctions en charge de la gestion de la transmission avec le serveur
+
     /**
      * Connecte le client à un serveur indiqué par son @param host et son @param port
      * @param host
@@ -34,6 +36,9 @@ public class Client {
         }
     }
 
+    /**
+     * Déconnecte le client du serveur actuel
+     */
     public void disconnectFromServer() {
         try {
             System.out.println("Déconnexion du serveur " + this.clientSocket.getRemoteSocketAddress());
@@ -45,7 +50,7 @@ public class Client {
         }
     }
 
-    //Fonctions en charge des échanges de message avec le serveur
+    //Fonctions en charge des échanges de messages avec le serveur
 
     /**
      * Met le client en attente afin que le serveur puisse envoyer des informations
