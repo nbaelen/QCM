@@ -42,6 +42,7 @@ class ServerThread extends Thread {
         this.notifyConnexion();
         this.askClientPseudo();
         this.startGame(3);
+        this.endTransmission();
 
         //A changer c'est pas beau
         /* while (true) {
@@ -114,8 +115,8 @@ class ServerThread extends Thread {
             if (askQuestion())
                 this.addScore(1);
         }
-        this.sendToClient(this.getScore());
-        this.endTransmission();
+        this.sendToClient("Votre score : " + this.server.setScoreBoard(this.name, this.score).get(this.name));
+
     }
 
     /**

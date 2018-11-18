@@ -2,11 +2,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class Server {
 
     //Variables de classe
     private ArrayList<ServerThread> allThreads = new ArrayList<>();
+    private Hashtable<String, Integer> scoreBoard = new Hashtable<>();
     public boolean canStart = false;
 
     /**
@@ -14,7 +16,7 @@ public class Server {
      */
     public Server() {
         while (true) {
-            this.startListening(50000, 1);
+            this.startListening(50000, 2);
             this.canStart = true;
         }
     }
@@ -36,6 +38,30 @@ public class Server {
                 System.out.println("Connexion impossible.");
             }
         }
+    }
+
+    /**
+     * Renvoie le tableau des scores aux différents Threads. Mise en attente si ce dernier n'est pas complet.
+     * @param name
+     * @param score
+     * @return
+     */
+    synchronized public Hashtable<String, Integer> setScoreBoard(String name, int score) {
+        this.scoreBoard.put(name, score);
+
+        if (this.scoreBoard.size() != this.allThreads.size()) {
+            try {
+                System.out.println("Waiting for other scores");
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Notify every Threads, scores are OK");
+            notifyAll();
+        }
+
+        return this.scoreBoard;
     }
 
     public static void main(String[] args) {
