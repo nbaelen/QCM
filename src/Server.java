@@ -10,6 +10,7 @@ public class Server {
     private ArrayList<ServerThread> allThreads = new ArrayList<>();
     private Hashtable<String, Integer> scoreBoard = new Hashtable<>();
     public boolean canStart = false;
+    private int players = 2;
 
     /**
      * Constructeur de classe par défaut
@@ -62,6 +63,24 @@ public class Server {
         }
 
         return this.scoreBoard;
+    }
+
+    /**
+     * Met en attente les Thread pour les faire commencer ensemble
+     */
+    synchronized public void canStart() {
+        System.out.println("Entering canStart()");
+        if (this.allThreads.size() == this.players)  {
+            System.out.println("Notifying all Threads, Game can Start");
+            notifyAll();
+        } else {
+            System.out.println("Waiting for other players to connect");
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {

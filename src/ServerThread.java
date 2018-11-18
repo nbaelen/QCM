@@ -41,6 +41,7 @@ class ServerThread extends Thread {
     public void run() {
         this.notifyConnexion();
         this.askClientPseudo();
+        this.server.canStart();
         this.startGame(3);
         this.endTransmission();
 
