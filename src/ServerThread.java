@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 class ServerThread extends Thread {
 
@@ -19,7 +22,6 @@ class ServerThread extends Thread {
 
     /**
      * Constructeur de classe
-     *
      * @param name
      * @param serviceSocket
      */
@@ -42,30 +44,14 @@ class ServerThread extends Thread {
         this.notifyConnexion();
         this.askClientPseudo();
         this.server.canStart();
-        this.startGame(3);
+        this.playGame(3);
         this.endTransmission();
-
-        //A changer c'est pas beau
-        /* while (true) {
-            if (this.server.canStart == true) {
-                break;
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("En attente d'autres joueurs ...");
-        } */
-
-
     }
 
     //Fonctions en charge des échanges de messages avec le client
 
     /**
      * Permet d'envoyer un @param message au client, et de le notifier dans la console
-     *
      * @param message
      */
     public void sendToClient(String message) {
@@ -88,6 +74,13 @@ class ServerThread extends Thread {
      */
     public String waitClientAnswer() {
         this.sendToClient("???");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         String clientAnswer = "";
         try {
             clientAnswer = this.serverBufferedReader.readLine();
@@ -111,13 +104,20 @@ class ServerThread extends Thread {
     /**
      * Demande au client son pseudo et le stocke dans la variable de classe associée
      */
-    public void startGame(int numberQuestion) {
+    public void playGame (int numberQuestion) {
         for (int i = 0; i < numberQuestion; i++) {
             if (askQuestion())
                 this.addScore(1);
         }
-        this.sendToClient("Votre score : " + this.server.setScoreBoard(this.name, this.score).get(this.name));
 
+        Hashtable<String, Integer> scores = this.server.setScoreBoard(this.clientPseudo, this.score);
+        Set<String> keys = scores.keySet();
+        for(String key: keys){
+            sendToClient(key + " a marqué " + scores.get(key) + " point(s) !");
+        }
+         {
+
+        }
     }
 
     /**
@@ -155,9 +155,5 @@ class ServerThread extends Thread {
     //Fonctions relatives à la gestion des scores
     public void addScore(int point) {
         this.score += point;
-    }
-
-    public String getScore() {
-        return "Votre score est de " + this.score + " points !";
     }
 }
