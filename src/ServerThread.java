@@ -3,9 +3,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.time.Duration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.*;
 
 class ServerThread extends Thread {
 
@@ -43,6 +45,7 @@ class ServerThread extends Thread {
     public void run() {
         this.notifyConnexion();
         this.askClientPseudo();
+        this.sendToClient("Le jeu va commencer, veuillez patienter");
         this.server.canStart();
         this.playGame(3);
         this.endTransmission();
@@ -55,7 +58,7 @@ class ServerThread extends Thread {
      * @param message
      */
     public void sendToClient(String message) {
-        if (!message.equals("???") || !message.equals("###"))
+        if (!message.contains("???") && !message.contains("###"))
             System.out.println("Thread " + this.name + " > " + message);
         this.clientPrintStream.println(message);
     }
@@ -74,12 +77,6 @@ class ServerThread extends Thread {
      */
     public String waitClientAnswer() {
         this.sendToClient("???");
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         String clientAnswer = "";
         try {

@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 
 public class Server {
@@ -69,6 +70,7 @@ public class Server {
      * Met en attente les Thread pour les faire commencer ensemble
      */
     synchronized public void canStart() {
+        System.out.println(this);
         System.out.println("Entering canStart()");
         if (this.allThreads.size() == this.players)  {
             System.out.println("Notifying all Threads, Game can Start");
