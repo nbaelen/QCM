@@ -99,7 +99,7 @@ class ServerThread extends Thread {
     //Fonctions relatives au jeu
 
     /**
-     * Demande au client son pseudo et le stocke dans la variable de classe associée A ENLEVER
+     * Demande au client son pseudo et le stocke dans la variable de classe associée A ENLEVER C PO JOLI
      */
     public void playGame () {
         ArrayList<Question> questionList = this.server.getQuestionList();
@@ -127,7 +127,6 @@ class ServerThread extends Thread {
 
     /**
      * Pose une question au joueur, et valide ou non sa réponse à l'aide d'un boolean
-     *
      * @return goodAnswer
      */
     public boolean askQuestion(Question question) {

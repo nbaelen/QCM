@@ -79,10 +79,26 @@ public class Client {
     /**
      * Permet au client de répondre aux questions posées par le serveur suite à une transmission contenant "???"
      */
+
     public void answerServerQuestion() {
-        String clientAnswer = this.scanner.nextLine();
-        serverPrintStream.println(clientAnswer);
+        ClientAnswer c = new ClientAnswer();
+        c.start();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (c.getClientAnswer() == null) {
+            System.out.println("enmpty");
+            c.interrupt();
+            System.out.println("Stop Thread");
+        } else {
+            System.out.println("not empty");
+            serverPrintStream.println(c.getClientAnswer());
+        }
+
         this.waitServerMessage();
+
     }
 
     public static void main(String[] args) {
