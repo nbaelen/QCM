@@ -68,7 +68,7 @@ public class Client {
                     this.disconnectFromServer();
                     break;
                 } else {
-                    System.out.println("Server > " + serverMessage);
+                    System.out.println(serverMessage);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -81,24 +81,21 @@ public class Client {
      */
 
     public void answerServerQuestion() {
-        ClientAnswer c = new ClientAnswer();
-        c.start();
+        ClientAnswerThread cat = new ClientAnswerThread();
+
+        cat.start();
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (c.getClientAnswer() == null) {
-            System.out.println("enmpty");
-            c.interrupt();
-            System.out.println("Stop Thread");
-        } else {
-            System.out.println("not empty");
-            serverPrintStream.println(c.getClientAnswer());
-        }
+        if (cat.getClientAnswer() == null) {
+            cat.interrupt();
+            serverPrintStream.println("///");
+        } else
+            serverPrintStream.println(cat.getClientAnswer());
 
         this.waitServerMessage();
-
     }
 
     public static void main(String[] args) {

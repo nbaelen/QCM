@@ -139,6 +139,9 @@ class ServerThread extends Thread {
         if (waitClientAnswer().toLowerCase().equals(question.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
             return true;
+        } else if (waitClientAnswer().equals("///")) {
+            this.sendToClient("Vous n'avez pas fourni de réponse, merci de répondre dans le temps imparti !");
+            return false;
         } else {
             this.sendToClient("Mauvaise réponse... La bonne réponse était : " + question.getAnswer());
             return false;
