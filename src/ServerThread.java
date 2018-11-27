@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,7 +48,7 @@ class ServerThread extends Thread {
         this.askClientPseudo();
         this.sendToClient("Le jeu va commencer, veuillez patienter");
         this.server.canStart();
-        this.playGame(3);
+        this.playGame();
         this.endTransmission();
     }
 
@@ -72,7 +73,6 @@ class ServerThread extends Thread {
 
     /**
      * Permet d'attendre la réponse d'une client, et la renvoie
-     *
      * @return clientAnswer
      */
     public String waitClientAnswer() {
@@ -99,11 +99,13 @@ class ServerThread extends Thread {
     //Fonctions relatives au jeu
 
     /**
-     * Demande au client son pseudo et le stocke dans la variable de classe associée
+     * Demande au client son pseudo et le stocke dans la variable de classe associée A ENLEVER
      */
-    public void playGame (int numberQuestion) {
-        for (int i = 0; i < numberQuestion; i++) {
-            if (askQuestion())
+    public void playGame () {
+        ArrayList<Question> questionList = this.server.getQuestionList();
+
+        for (Question question: questionList) {
+            if (askQuestion(question))
                 this.addScore(1);
         }
 
@@ -111,9 +113,6 @@ class ServerThread extends Thread {
         Set<String> keys = scores.keySet();
         for(String key: keys){
             sendToClient(key + " a marqué " + scores.get(key) + " point(s) !");
-        }
-         {
-
         }
     }
 
@@ -131,20 +130,18 @@ class ServerThread extends Thread {
      *
      * @return goodAnswer
      */
-    public boolean askQuestion() {
-        Question q = new Question();
-
-        this.sendToClient(q.getQuestion());
-        for (String possibleAnswer : q.getPossibleAnswers()) {
+    public boolean askQuestion(Question question) {
+        this.sendToClient(question.getQuestion());
+        for (String possibleAnswer : question.getPossibleAnswers()) {
             this.sendToClient(possibleAnswer);
         }
         this.sendToClient("Votre réponse ?");
 
-        if (waitClientAnswer().toLowerCase().equals(q.getAnswer().toLowerCase())) {
+        if (waitClientAnswer().toLowerCase().equals(question.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
             return true;
         } else {
-            this.sendToClient("Mauvaise réponse... La bonne réponse était : " + q.getAnswer());
+            this.sendToClient("Mauvaise réponse... La bonne réponse était : " + question.getAnswer());
             return false;
         }
     }

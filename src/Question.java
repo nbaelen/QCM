@@ -17,7 +17,6 @@ public class Question {
     public Question() {
         try {
             this.questionFileReader = new BufferedReader(new FileReader("questions.txt"));
-            System.out.println("Generating new Question");
             this.setInformations(this.getInformations(new Random().nextInt(6)));
         } catch (IOException e) {
             e.printStackTrace();
@@ -35,7 +34,6 @@ public class Question {
         int counter = 0;
         while ((line = questionFileReader.readLine()) != null) {
             if (counter == lineNumber) {
-                System.out.println("Line " + counter + " : " + line);
                 return line;
             }
             counter++;
@@ -48,9 +46,7 @@ public class Question {
      * @param informations
      */
     public void setInformations(String informations) {
-        System.out.println("Infos = " + informations);
         String[] informationsArray = informations.split(";",-1);
-
         this.question = informationsArray[0];
         this.possibleAnswers = informationsArray[1].split(",", -1);
         this.answer = informationsArray[2];
