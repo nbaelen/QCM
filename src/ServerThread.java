@@ -3,12 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.*;
 
 class ServerThread extends Thread {
 
@@ -17,6 +14,7 @@ class ServerThread extends Thread {
     private Socket serviceSocket; // Socket de service du client
     private PrintStream clientPrintStream; // PrintStream du client
     private BufferedReader serverBufferedReader; // BufferedReader du client
+    private String status = "IDLE";
 
     //Variables utilisées pour le fonctionnement du jeu
     private String clientPseudo;
@@ -49,6 +47,14 @@ class ServerThread extends Thread {
         this.server.canStart();
         this.playGame();
         this.endTransmission();
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return this.status;
     }
 
     //Fonctions en charge des échanges de messages avec le client
@@ -122,6 +128,7 @@ class ServerThread extends Thread {
         this.sendToClient("Quel est votre pseudo ?");
         this.clientPseudo = this.waitClientAnswer();
         this.sendToClient("Bonjour " + this.clientPseudo + " !");
+        this.setStatus("READY");
     }
 
     /**

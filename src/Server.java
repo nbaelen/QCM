@@ -1,10 +1,8 @@
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Random;
 
 public class Server {
 
@@ -55,16 +53,22 @@ public class Server {
      * Met en attente les Thread pour les faire commencer ensemble
      */
     synchronized public void canStart() {
-        if (this.allThreads.size() == this.players)  {
-            System.out.println("Server > Tout les joueurs sont connectés, le jeu commence");
-            notifyAll();
-        } else {
-            System.out.println("Server > En attente d'" + (this.players-this.allThreads.size()) + " joueur(s) supplémentaire(s) !");
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        try {
+            if (this.allThreads.size() == this.players) {
+                for (ServerThread thread : this.allThreads) {
+                    if (!thread.getStatus().equals("READY")) {
+                        System.out.println("NOT READY !");
+                        wait();
+                        break;
+                    }
+                }
+                System.out.println("Server > Tout les joueurs sont connectés, le jeu commence");
+                notifyAll();
+            } else {
+                System.out.println("Server > En attente d'" + (this.players - this.allThreads.size()) + " joueur(s) supplémentaire(s) !");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
