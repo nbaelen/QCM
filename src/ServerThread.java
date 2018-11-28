@@ -13,7 +13,6 @@ import java.util.concurrent.*;
 class ServerThread extends Thread {
 
     //Variables utilisées pour le fonctionnement du Thread
-    private String name;
     private Server server;
     private Socket serviceSocket; // Socket de service du client
     private PrintStream clientPrintStream; // PrintStream du client
@@ -29,9 +28,9 @@ class ServerThread extends Thread {
      * @param serviceSocket
      */
     public ServerThread(String name, Server server, Socket serviceSocket) {
-        this.name = name;
         this.server = server;
         this.serviceSocket = serviceSocket;
+        this.setName(name);
 
         //Création des flux pour discuter avec le client
         try {
@@ -60,7 +59,7 @@ class ServerThread extends Thread {
      */
     public void sendToClient(String message) {
         if (!message.contains("???") && !message.contains("###"))
-            System.out.println("Thread " + this.name + " > " + message);
+            System.out.println("Thread " + this.getName() + " > " + message);
         this.clientPrintStream.println(message);
     }
 
@@ -81,7 +80,7 @@ class ServerThread extends Thread {
         String clientAnswer = "";
         try {
             clientAnswer = this.serverBufferedReader.readLine();
-            System.out.println("Client " + this.name + " > " + clientAnswer);
+            System.out.println("Client " + this.getName() + " > " + clientAnswer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +91,7 @@ class ServerThread extends Thread {
      * Notifie la connexion entre le thread et le client
      */
     public void notifyConnexion() {
-        System.out.println("Thread " + this.name + " > Connexion établie avec un client (" + serviceSocket.getRemoteSocketAddress() + ")");
+        System.out.println("Thread " + this.getName() + " > Connexion établie avec un client (" + serviceSocket.getRemoteSocketAddress() + ")");
         this.sendToClient("Bienvenue au QCM. Vous êtes connecté au serveur");
     }
 

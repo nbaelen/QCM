@@ -79,7 +79,6 @@ public class Client {
     /**
      * Permet au client de répondre aux questions posées par le serveur suite à une transmission contenant "???"
      */
-
     public void answerServerQuestion() {
         ClientAnswerThread cat = new ClientAnswerThread();
 
@@ -92,8 +91,11 @@ public class Client {
         if (cat.getClientAnswer() == null) {
             cat.interrupt();
             serverPrintStream.println("///");
-        } else
+        } else {
             serverPrintStream.println(cat.getClientAnswer());
+            System.out.println(cat.getClientAnswer());
+        }
+
 
         this.waitServerMessage();
     }
