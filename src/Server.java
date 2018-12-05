@@ -23,8 +23,21 @@ public class Server {
     }
 
     public void setQuestionList(int number) {
-        for (int i=0; i<number; i++)
-            questionList.add(new Question());
+        int i=0;
+        boolean alreadyIn = false;
+        while (i<number) {
+            Question q = new Question();
+            for (Question qInList: this.questionList) {
+                if (qInList.getQuestion().equals(q.getQuestion())) {
+                    alreadyIn = true;
+                } else
+                    alreadyIn = false;
+            }
+            if (!alreadyIn) {
+                this.questionList.add(q);
+                i++;
+            }
+        }
     }
 
     public ArrayList<Question> getQuestionList() {
@@ -66,6 +79,7 @@ public class Server {
                 notifyAll();
             } else {
                 System.out.println("Server > En attente d'" + (this.players - this.allThreads.size()) + " joueur(s) supplémentaire(s) !");
+                wait();
             }
         } catch (Exception e) {
             e.printStackTrace();

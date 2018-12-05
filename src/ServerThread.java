@@ -111,7 +111,8 @@ class ServerThread extends Thread {
 
         for (Question question: questionList) {
             if (askQuestion(question))
-                this.addScore(1);
+                this.addScore(question.getScore());
+            this.sendToClient("------------------------------------------------------------------");
         }
 
         Hashtable<String, Integer> scores = this.server.setScoreBoard(this.clientPseudo, this.score);

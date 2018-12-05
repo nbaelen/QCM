@@ -84,7 +84,7 @@ public class Client {
 
         cat.start();
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

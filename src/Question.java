@@ -10,6 +10,7 @@ public class Question {
     private String question;
     private String[] possibleAnswers;
     private String answer;
+    private int score;
 
     /**
      * Constructeur de classe. Permet la génération d'une question aléatoire contenue dans le fichier questions.txt
@@ -50,6 +51,7 @@ public class Question {
         this.question = informationsArray[0];
         this.possibleAnswers = informationsArray[1].split(",", -1);
         this.answer = informationsArray[2];
+        this.score = Integer.parseInt(informationsArray[3]);
     }
 
     public String getAnswer() {
@@ -62,5 +64,9 @@ public class Question {
 
     public String[] getPossibleAnswers() {
         return possibleAnswers;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
