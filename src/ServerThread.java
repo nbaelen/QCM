@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 class ServerThread extends Thread {
@@ -110,15 +111,25 @@ class ServerThread extends Thread {
         ArrayList<Question> questionList = this.server.getQuestionList();
 
         for (Question question: questionList) {
-            if (askQuestion(question))
+            if (askQuestion(question)) {
                 this.addScore(question.getScore());
-            this.sendToClient("------------------------------------------------------------------");
-        }
 
-        Hashtable<String, Integer> scores = this.server.setScoreBoard(this.clientPseudo, this.score);
-        Set<String> keys = scores.keySet();
-        for(String key: keys){
-            sendToClient(key + " a marqué " + scores.get(key) + " point(s) !");
+                List scores = this.server.setScoreBoard(this.clientPseudo, question.getScore(), this.score);
+
+                this.sendToClient("------------------------------------------------------------------");
+                Hashtable<String, Integer> tempScores = (Hashtable<String, Integer>) scores.get(0);
+                Set<String> tempKeys = tempScores.keySet();
+                for (String key : tempKeys) {
+                    sendToClient(key + " a marqué " + tempScores.get(key) + " point(s) !");
+                }
+                this.sendToClient("------------------------------------------------------------------");
+                Hashtable<String, Integer> globalScores = (Hashtable<String, Integer>) scores.get(1);
+                Set<String> globalKeys = globalScores.keySet();
+                for (String key : globalKeys) {
+                    sendToClient(key + " a marqué un total de " + globalScores.get(key) + " point(s) !");
+                }
+                this.sendToClient("------------------------------------------------------------------");
+            }
         }
     }
 

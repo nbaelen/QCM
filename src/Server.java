@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Random;
 
 public class Server {
@@ -11,6 +12,7 @@ public class Server {
     private ArrayList<ServerThread> allThreads = new ArrayList<>();
     public ArrayList<Question> questionList = new ArrayList<>();
     private Hashtable<String, Integer> scoreBoard = new Hashtable<>();
+    private Hashtable<String, Integer> tempScoreBoard = new Hashtable<>();
     private int players;
 
     /**
@@ -97,8 +99,10 @@ public class Server {
      * @param score
      * @return
      */
-    synchronized public Hashtable<String, Integer> setScoreBoard(String name, int score) {
-        this.scoreBoard.put(name, score);
+    synchronized public List<Hashtable> setScoreBoard(String name, int score, int globalScore) {
+        System.out.println("here" + name + score + globalScore);
+        this.scoreBoard.put(name, globalScore);
+        this.tempScoreBoard.put(name, score);
 
         if (this.scoreBoard.size() != this.allThreads.size()) {
             try {
@@ -112,7 +116,11 @@ public class Server {
             notifyAll();
         }
 
-        return this.scoreBoard;
+        List<Hashtable> scores = new ArrayList<>();
+        scores.add(this.tempScoreBoard);
+        scores.add(this.scoreBoard);
+
+        return scores;
     }
 
     public static void main(String[] args) {
