@@ -13,6 +13,8 @@ public class Server {
     public ArrayList<Question> questionList = new ArrayList<>();
     private Hashtable<String, Integer> scoreBoard = new Hashtable<>();
     private Hashtable<String, Integer> tempScoreBoard = new Hashtable<>();
+    private Hashtable<String, Integer> timeBoard = new Hashtable<>();
+    private Hashtable<String, Integer> tempTimeBoard = new Hashtable<>();
     private int players;
 
     /**
@@ -100,7 +102,6 @@ public class Server {
      * @return
      */
     synchronized public List<Hashtable> setScoreBoard(String name, int score, int globalScore) {
-        System.out.println("here" + name + score + globalScore);
         this.scoreBoard.put(name, globalScore);
         this.tempScoreBoard.put(name, score);
 
@@ -122,6 +123,31 @@ public class Server {
 
         return scores;
     }
+
+    synchronized public List<Hashtable> setTime(String name, int time, int globalTime) {
+        this.timeBoard.put(name, time);
+        this.tempTimeBoard.put(name, globalTime);
+
+        if (this.timeBoard.size() != this.allThreads.size()) {
+            try {
+                System.out.println("Server > En attente de temps supplémentaires (" + (this.allThreads.size()-this.timeBoard.size()) + " joueur(s)");
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Server > Tout les temps ont été récupérés !");
+            notifyAll();
+        }
+
+        List<Hashtable> times = new ArrayList<>();
+        times.add(this.tempScoreBoard);
+        times.add(this.scoreBoard);
+
+        return times;
+    }
+
+
 
     public static void main(String[] args) {
         Server s = new Server();
