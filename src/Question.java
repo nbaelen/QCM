@@ -15,10 +15,10 @@ public class Question {
     /**
      * Constructeur de classe. Permet la génération d'une question aléatoire contenue dans le fichier questions.txt
      */
-    public Question() {
+    public Question(int number) {
         try {
             this.questionFileReader = new BufferedReader(new FileReader("questions.txt"));
-            this.setInformations(this.getInformations(new Random().nextInt(6)));
+            this.setInformations(this.getInformations(number));
         } catch (IOException e) {
             e.printStackTrace();
         }

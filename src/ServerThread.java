@@ -143,10 +143,11 @@ class ServerThread extends Thread {
         }
         this.sendToClient("Votre réponse ?");
 
-        if (waitClientAnswer().toLowerCase().equals(question.getAnswer().toLowerCase())) {
+        String answer = waitClientAnswer();
+        if (answer.toLowerCase().equals(question.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
             return true;
-        } else if (waitClientAnswer().equals("///")) {
+        } else if (answer.equals("///")) {
             this.sendToClient("Vous n'avez pas fourni de réponse, merci de répondre dans le temps imparti !");
             return false;
         } else {

@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 
 public class Server {
 
@@ -10,34 +11,38 @@ public class Server {
     private ArrayList<ServerThread> allThreads = new ArrayList<>();
     public ArrayList<Question> questionList = new ArrayList<>();
     private Hashtable<String, Integer> scoreBoard = new Hashtable<>();
-    private int players = 2;
+    private int players;
 
     /**
      * Constructeur de classe par défaut
      */
     public Server() {
         setQuestionList(3);
+        this.players = 2;
         while (true) {
             this.startListening(50000, 2);
         }
     }
 
-    public void setQuestionList(int number) {
-        int i=0;
-        boolean alreadyIn = false;
-        while (i<number) {
-            Question q = new Question();
-            for (Question qInList: this.questionList) {
-                if (qInList.getQuestion().equals(q.getQuestion())) {
+    public void setQuestionList(int size) {
+        int[] randomInt = new int[size];
+        int i = 0;
+        while (i < size) {
+            boolean alreadyIn = false;
+            int randomNumber = new Random().nextInt(6);
+
+            for (int number : randomInt) {
+                if (number == randomNumber)
                     alreadyIn = true;
-                } else
-                    alreadyIn = false;
             }
+
             if (!alreadyIn) {
-                this.questionList.add(q);
+                randomInt[i] = randomNumber;
                 i++;
+                questionList.add(new Question(randomNumber));
             }
         }
+        System.out.println(randomInt);
     }
 
     public ArrayList<Question> getQuestionList() {

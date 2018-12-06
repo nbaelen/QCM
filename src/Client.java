@@ -10,12 +10,14 @@ public class Client {
     private BufferedReader clientBufferedReader;
     private PrintStream serverPrintStream;
     private Scanner scanner = new Scanner(System.in);
+    private int questionTime;
 
     /**
      * Constructeur de classe par défaut
      */
     public Client() {
         this.connectToServer("localhost", 50000);
+        this.questionTime = 10000;
         this.waitServerMessage();
     }
 
@@ -84,18 +86,16 @@ public class Client {
 
         cat.start();
         try {
-            Thread.sleep(10000);
+            Thread.sleep(questionTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         if (cat.getClientAnswer() == null) {
-            cat.interrupt();
             serverPrintStream.println("///");
         } else {
             serverPrintStream.println(cat.getClientAnswer());
-            System.out.println(cat.getClientAnswer());
         }
-
+        cat.interrupt();
 
         this.waitServerMessage();
     }
