@@ -93,7 +93,8 @@ public class Client {
         if (cat.getClientAnswer() == null) {
             serverPrintStream.println("///");
         } else {
-            serverPrintStream.println(cat.getClientAnswer());
+            serverPrintStream.println(cat.getClientAnswer() + "---" + cat.getTime());
+            System.out.println(cat.getClientAnswer() + "---" + cat.getTime());
         }
         cat.interrupt();
 

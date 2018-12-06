@@ -1,10 +1,7 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Server {
 
@@ -13,8 +10,8 @@ public class Server {
     public ArrayList<Question> questionList = new ArrayList<>();
     private Hashtable<String, Integer> scoreBoard = new Hashtable<>();
     private Hashtable<String, Integer> tempScoreBoard = new Hashtable<>();
-    private Hashtable<String, Integer> timeBoard = new Hashtable<>();
-    private Hashtable<String, Integer> tempTimeBoard = new Hashtable<>();
+    private Hashtable<String, Long> timeBoard = new Hashtable<>();
+    private Hashtable<String, Long> tempTimeBoard = new Hashtable<>();
     private int players;
 
     /**
@@ -46,7 +43,6 @@ public class Server {
                 questionList.add(new Question(randomNumber));
             }
         }
-        System.out.println(randomInt);
     }
 
     public ArrayList<Question> getQuestionList() {
@@ -79,7 +75,7 @@ public class Server {
             if (this.allThreads.size() == this.players) {
                 for (ServerThread thread : this.allThreads) {
                     if (!thread.getStatus().equals("READY")) {
-                        System.out.println("NOT READY !");
+                        System.out.println("DO NOT START !");
                         wait();
                         break;
                     }
@@ -124,9 +120,9 @@ public class Server {
         return scores;
     }
 
-    synchronized public List<Hashtable> setTime(String name, int time, int globalTime) {
-        this.timeBoard.put(name, time);
-        this.tempTimeBoard.put(name, globalTime);
+    synchronized public List<Hashtable> setTimeBoard(String name, long time, long globalTime) {
+        this.timeBoard.put(name, globalTime);
+        this.tempTimeBoard.put(name, time);
 
         if (this.timeBoard.size() != this.allThreads.size()) {
             try {
@@ -141,8 +137,8 @@ public class Server {
         }
 
         List<Hashtable> times = new ArrayList<>();
-        times.add(this.tempScoreBoard);
-        times.add(this.scoreBoard);
+        times.add(this.tempTimeBoard);
+        times.add(this.timeBoard);
 
         return times;
     }

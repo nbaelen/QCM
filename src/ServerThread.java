@@ -20,6 +20,8 @@ class ServerThread extends Thread {
     //Variables utilisées pour le fonctionnement du jeu
     private String clientPseudo;
     private int score;
+    private long time = 0;
+    private long tempTime = 0;
 
     /**
      * Constructeur de classe
@@ -109,27 +111,43 @@ class ServerThread extends Thread {
      */
     public void playGame () {
         ArrayList<Question> questionList = this.server.getQuestionList();
-
+        List scores;
+        List times;
         for (Question question: questionList) {
             if (askQuestion(question)) {
                 this.addScore(question.getScore());
-
-                List scores = this.server.setScoreBoard(this.clientPseudo, question.getScore(), this.score);
-
-                this.sendToClient("------------------------------------------------------------------");
-                Hashtable<String, Integer> tempScores = (Hashtable<String, Integer>) scores.get(0);
-                Set<String> tempKeys = tempScores.keySet();
-                for (String key : tempKeys) {
-                    sendToClient(key + " a marqué " + tempScores.get(key) + " point(s) !");
-                }
-                this.sendToClient("------------------------------------------------------------------");
-                Hashtable<String, Integer> globalScores = (Hashtable<String, Integer>) scores.get(1);
-                Set<String> globalKeys = globalScores.keySet();
-                for (String key : globalKeys) {
-                    sendToClient(key + " a marqué un total de " + globalScores.get(key) + " point(s) !");
-                }
-                this.sendToClient("------------------------------------------------------------------");
+                scores = this.server.setScoreBoard(this.clientPseudo, question.getScore(), this.score);
+                times = this.server.setTimeBoard(this.clientPseudo, this.tempTime, this.time);
+            } else {
+                scores = this.server.setScoreBoard(this.clientPseudo, 0, this.score);
+                times = this.server.setTimeBoard(this.clientPseudo, 50000, this.time);
             }
+
+            this.sendToClient("------------------------------------------------------------------");
+            Hashtable<String, Integer> tempScores = (Hashtable<String, Integer>) scores.get(0);
+            Set<String> tempScoreKeys = tempScores.keySet();
+            for (String key : tempScoreKeys) {
+                sendToClient(key + " a marqué " + tempScores.get(key) + " point(s) !");
+            }
+            this.sendToClient("------------------------------------------------------------------");
+            Hashtable<String, Integer> globalScores = (Hashtable<String, Integer>) scores.get(1);
+            Set<String> globalScoreKeys = globalScores.keySet();
+            for (String key : globalScoreKeys) {
+                sendToClient(key + " a marqué un total de " + globalScores.get(key) + " point(s) !");
+            }
+            this.sendToClient("------------------------------------------------------------------");
+            Hashtable<String, Long> tempTimes = (Hashtable<String, Long>) times.get(0);
+            Set<String> tempTimeKeys = tempTimes.keySet();
+            for (String key : tempTimeKeys) {
+                sendToClient(key + " a répondu en " + tempTimes.get(key) + " ms !");
+            }
+            this.sendToClient("------------------------------------------------------------------");
+            Hashtable<String, Long> globalTimes = (Hashtable<String, Long>) times.get(1);
+            Set<String> globalTimeKeys = tempTimes.keySet();
+            for (String key : globalTimeKeys) {
+                sendToClient(key + " a répondu à toutes les questions en " + globalTimes.get(key) + " ms !");
+            }
+            this.sendToClient("------------------------------------------------------------------");
         }
     }
 
@@ -138,7 +156,7 @@ class ServerThread extends Thread {
      */
     public void askClientPseudo() {
         this.sendToClient("Quel est votre pseudo ?");
-        this.clientPseudo = this.waitClientAnswer();
+        this.clientPseudo = this.waitClientAnswer().split("---")[0];
         this.sendToClient("Bonjour " + this.clientPseudo + " !");
         this.setStatus("READY");
     }
@@ -155,8 +173,12 @@ class ServerThread extends Thread {
         this.sendToClient("Votre réponse ?");
 
         String answer = waitClientAnswer();
-        if (answer.toLowerCase().equals(question.getAnswer().toLowerCase())) {
+        if (answer.toLowerCase().split("---")[0].equals(question.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
+            System.out.println(answer.toLowerCase().split("---")[1]);
+            this.tempTime = Long.parseLong(answer.toLowerCase().split("---")[1]);
+            this.time += Long.parseLong(answer.toLowerCase().split("---")[1]);
+            System.out.println(time + "/" + tempTime);
             return true;
         } else if (answer.equals("///")) {
             this.sendToClient("Vous n'avez pas fourni de réponse, merci de répondre dans le temps imparti !");
