@@ -91,10 +91,9 @@ public class Client {
             e.printStackTrace();
         }
         if (cat.getClientAnswer() == null) {
-            serverPrintStream.println("///");
+            serverPrintStream.println("///---50000");
         } else {
             serverPrintStream.println(cat.getClientAnswer() + "---" + cat.getTime());
-            System.out.println(cat.getClientAnswer() + "---" + cat.getTime());
         }
         cat.interrupt();
 

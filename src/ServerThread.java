@@ -117,11 +117,11 @@ class ServerThread extends Thread {
             if (askQuestion(question)) {
                 this.addScore(question.getScore());
                 scores = this.server.setScoreBoard(this.clientPseudo, question.getScore(), this.score);
-                times = this.server.setTimeBoard(this.clientPseudo, this.tempTime, this.time);
             } else {
                 scores = this.server.setScoreBoard(this.clientPseudo, 0, this.score);
-                times = this.server.setTimeBoard(this.clientPseudo, 50000, this.time);
             }
+
+            times = this.server.setTimeBoard(this.clientPseudo, this.tempTime, this.time);
 
             this.sendToClient("------------------------------------------------------------------");
             Hashtable<String, Integer> tempScores = (Hashtable<String, Integer>) scores.get(0);
@@ -129,7 +129,6 @@ class ServerThread extends Thread {
             for (String key : tempScoreKeys) {
                 sendToClient(key + " a marqué " + tempScores.get(key) + " point(s) !");
             }
-            this.sendToClient("------------------------------------------------------------------");
             Hashtable<String, Integer> globalScores = (Hashtable<String, Integer>) scores.get(1);
             Set<String> globalScoreKeys = globalScores.keySet();
             for (String key : globalScoreKeys) {
@@ -141,13 +140,13 @@ class ServerThread extends Thread {
             for (String key : tempTimeKeys) {
                 sendToClient(key + " a répondu en " + tempTimes.get(key) + " ms !");
             }
-            this.sendToClient("------------------------------------------------------------------");
             Hashtable<String, Long> globalTimes = (Hashtable<String, Long>) times.get(1);
             Set<String> globalTimeKeys = tempTimes.keySet();
             for (String key : globalTimeKeys) {
                 sendToClient(key + " a répondu à toutes les questions en " + globalTimes.get(key) + " ms !");
             }
             this.sendToClient("------------------------------------------------------------------");
+
         }
     }
 
@@ -167,20 +166,22 @@ class ServerThread extends Thread {
      */
     public boolean askQuestion(Question question) {
         this.sendToClient(question.getQuestion());
+        int i = 1;
         for (String possibleAnswer : question.getPossibleAnswers()) {
-            this.sendToClient(possibleAnswer);
+            this.sendToClient(i + ". " + possibleAnswer);
+            i++;
         }
         this.sendToClient("Votre réponse ?");
 
         String answer = waitClientAnswer();
+
+        this.tempTime = Long.parseLong(answer.toLowerCase().split("---")[1]);
+        this.time += Long.parseLong(answer.toLowerCase().split("---")[1]);
+
         if (answer.toLowerCase().split("---")[0].equals(question.getAnswer().toLowerCase())) {
             this.sendToClient("Bonne réponse ! Bravo !");
-            System.out.println(answer.toLowerCase().split("---")[1]);
-            this.tempTime = Long.parseLong(answer.toLowerCase().split("---")[1]);
-            this.time += Long.parseLong(answer.toLowerCase().split("---")[1]);
-            System.out.println(time + "/" + tempTime);
             return true;
-        } else if (answer.equals("///")) {
+        } else if (answer.contains("///")) {
             this.sendToClient("Vous n'avez pas fourni de réponse, merci de répondre dans le temps imparti !");
             return false;
         } else {

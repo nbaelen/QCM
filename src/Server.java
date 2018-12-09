@@ -121,6 +121,7 @@ public class Server {
     }
 
     synchronized public List<Hashtable> setTimeBoard(String name, long time, long globalTime) {
+        System.out.println("params"+"/"+name+"/"+time+"/"+globalTime);
         this.timeBoard.put(name, globalTime);
         this.tempTimeBoard.put(name, time);
 
